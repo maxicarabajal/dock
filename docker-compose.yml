@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  demo:
+    build: ./demo
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://tranqui:3306/tranqui?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB_USER_NAME: maxi
+      DB_PASSWORD: 1660
+      DB_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+    restart: always
+    depends_on:
+      - tranqui
+
+  tranqui:
+    image: mysql:8.0.33
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: tranqui
+      MYSQL_USER: maxi
+      MYSQL_PASSWORD: 1660
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
